@@ -1,5 +1,6 @@
 import { atom, useAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Dialog, DialogPanel, DialogTitle, Button } from "@headlessui/react";
 
 const pictures = [
   "porto2",
@@ -37,15 +38,68 @@ pages.push({
 
 export const UI = () => {
   const [page, setPage] = useAtom(pageAtom);
+  const [isOpen, setIsOpen] = useState(true);
+  const [isIndonesian, setIsIndonesian] = useState(false);
 
   useEffect(() => {
     const audio = new Audio("/audios/page-flip-01a.mp3");
     audio.play();
   }, [page]);
 
+  function close() {
+    if (isIndonesian) {
+      setIsOpen(false);
+    } else {
+      setIsIndonesian(true);
+    }
+  }
+
   return (
     <>
-      <main className=" pointer-events-none select-none z-10 fixed  inset-0  flex justify-between flex-col">
+      <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={() => {}}>
+        <div className="fixed inset-0 z-10 bg-black/80">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <DialogPanel
+              transition
+              className="w-full max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+            >
+              <DialogTitle as="h3" className="text-base/7 font-bold text-white">
+                {isIndonesian ? "Informasi" : "Information"}
+              </DialogTitle>
+              <p className="mt-2 text-base/6 text-white/50">
+                {isIndonesian ? (
+                  <>
+                    Anda dapat mengubah posisi buku dengan:
+                    <br />
+                    <strong>[Desktop]</strong> Gunakan scroll wheel mouse untuk memperbesar dan memperkecil, gunakan klik kiri dan tahan untuk memutar buku, gunakan klik kanan dan tahan untuk menggeser posisi buku.
+                    <br />
+                    <strong>[Mobile]</strong> Gunakan dua jari untuk memperbesar atau memperkecil dengan gerakan membuka dan menutup atau geser untuk menggeser posisi buku, gunakan satu jari untuk memutar buku.
+                  </>
+                ) : (
+                  <>
+                    You can change the position of the book by:
+                    <br />
+                    <strong>[Desktop]</strong> Use mouse scroll wheel to zoom in and out of the book, use left click and hold to rotate the book, use right click and hold to shift the position of the book.
+                    <br />
+                    <strong>[Mobile]</strong> Use 2 fingers in an open and close manner to zoom in and out or slide to shift the position of the book, use 1 finger to rotate the book.
+                  </>
+                )}
+              </p>
+              <div className="mt-4">
+                <Button
+                  className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
+                  onClick={close}
+                >
+                  {isIndonesian ? "Oke, mengerti!" : "Okay, got it!"}
+                </Button>
+              </div>
+            </DialogPanel>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* Main Content */}
+      <main className="pointer-events-none select-none z-10 fixed inset-0 flex justify-between flex-col">
         <a
           className="pointer-events-auto mt-10 ml-10"
           href="https://ilhamsh.my.id"
@@ -57,7 +111,7 @@ export const UI = () => {
             {[...pages].map((_, index) => (
               <button
                 key={index}
-                className={`border-transparent hover:border-white transition-all duration-300  px-4 py-3 rounded-full  text-lg uppercase shrink-0 border ${
+                className={`border-transparent hover:border-white transition-all duration-300 px-4 py-3 rounded-full text-lg uppercase shrink-0 border ${
                   index === page
                     ? "bg-white/90 text-black"
                     : "bg-black/30 text-white"
@@ -70,7 +124,7 @@ export const UI = () => {
               </button>
             ))}
             <button
-              className={`border-transparent hover:border-white transition-all duration-300  px-4 py-3 rounded-full  text-lg uppercase shrink-0 border ${
+              className={`border-transparent hover:border-white transition-all duration-300 px-4 py-3 rounded-full text-lg uppercase shrink-0 border ${
                 page === pages.length
                   ? "bg-white/90 text-black"
                   : "bg-black/30 text-white"
@@ -82,27 +136,6 @@ export const UI = () => {
           </div>
         </div>
       </main>
-
-      <div className="fixed inset-0 flex items-center -rotate-2 select-none">
-        <div className="relative">
-          <div className="bg-white/0  animate-horizontal-scroll flex items-center gap-8 w-max px-8">
-            <h1 className="shrink-0 text-white text-10xl font-black ">
-              Portfolio
-            </h1>
-            <h2 className="shrink-0 text-transparent text-13xl font-bold outline-text italic">
-              Ilham Shofa
-            </h2>
-          </div>
-          <div className="absolute top-0 left-0 bg-white/0 animate-horizontal-scroll-2 flex items-center gap-8 px-8 w-max">
-            <h1 className="shrink-0 text-white text-10xl font-black ">
-              Portfolio
-            </h1>
-            <h2 className="shrink-0 text-transparent text-13xl font-bold outline-text italic">
-              Ilham Shofa
-            </h2>
-          </div>
-        </div>
-      </div>
     </>
   );
 };
